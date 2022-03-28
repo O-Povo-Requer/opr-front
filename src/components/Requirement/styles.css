@@ -68,3 +68,199 @@
 .requirement_date span {
     opacity: 0.8;   
 }
+
+.requirement_modal_title {
+    font-family: "Roboto Condensed", sans-serif;
+    font-size: 15px;
+}
+
+.requirement_modal_user {
+    display: flex;
+    justify-content: space-between;
+    margin: 25px  0 20px 0;
+}
+
+.requirement_modal_profile {
+    display: flex;
+}
+
+.requirement_modal_profile img {
+    width: 35px;
+    margin: 5px;
+}
+
+.requirement_modal_user_info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 5px;
+}
+
+.requirement_modal_profile span {
+    color: var(--infos);
+    flex-direction: column;
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+.requirement_modal_ocourr_date {
+    font-family: "Roboto Condensed", sans-serif;
+    color: var(--infos);
+}
+
+.requirement_modal_status {
+    display: flex;
+    align-items: flex-start;
+}
+
+.requirement_modal_status div {
+    flex-direction: column;
+    font-family: "Roboto Condensed", sans-serif;
+    margin-right: 20px;
+}
+
+.requirement_modal_status_user {
+    color: var(--blue);
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.requirement_modal_status_date {
+    color: var(--infos);
+    font-size: 12px;
+    margin-top: -2px;
+}
+
+.requirement_modal_tags {
+    display: flex;
+    font-family: "Roboto Condensed", sans-serif;
+    color: var(--descriptions);
+    margin: 10px 0 10px 15px;
+}
+
+.requirement_modal_tag {
+    display: flex;
+    background-color: var(--background);
+    width: 5;
+    padding: 0 12px;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+.requirement_modal_tag div {
+    padding-left: 5px;
+}
+
+.requirement_modal_message {
+    text-align: justify;
+    margin: 0 15px;
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+.requirement_modal_likes {
+    display: flex;
+    align-items: center;
+    color: var(--descriptions);
+    margin: 10px 15px;
+}
+
+.requirement_modal_likes div {
+    margin-left: 5px;
+}
+
+.requirement_modal_midia_comments {
+    display: flex;
+    justify-content: space-between;
+    font-family: "Roboto Condensed", sans-serif;
+    margin-top: 40px;
+}
+
+.requirement_modal_midias div {
+    display: flex;
+    flex-direction: row;
+    margin-left: 5px;
+}
+
+.image_cropped {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    margin: 5px 7px;
+}
+
+.requirement_modal_comments {
+    max-width: 500px;
+}
+
+.requirement_modal_comment {
+    margin: 5px 10px 25px;
+    max-height: 200px;
+    width: 480px;
+    overflow-y: scroll;
+}
+
+.requirement_modal_comment_user {
+    display: flex;
+    align-items: center;
+    margin: 15px 0 5px;
+}
+
+.requirement_modal_comment_user span {
+    margin-left: 10px;
+    font-size: 12px;
+}
+
+.image_profiles {
+    border-radius: 50%;
+    width: 30px;
+}
+
+.requirement_modal_comment_message {
+    font-size: 11px;
+    max-width: 460px;
+}
+
+.requirement_modal_legislators_comment {
+    display: flex;
+    justify-content: space-between;
+    font-family: "Roboto Condensed", sans-serif;
+}
+
+.requirement_modal_legislators {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 500px;
+    margin: 15px;
+}
+
+.requirement_modal_legislator {
+    display: flex;
+    flex-direction: column;
+    max-width: 150px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--background);
+}
+
+.requirement_modal_comment_input {
+    display: flex;
+    align-items: flex-end;
+    height: 110px;
+    margin-right: 10px;
+}
+
+.requirement_modal_comment_input input {
+    background-color: var(--background);
+    border: 1px var(--stroke) solid;
+    border-radius: 5px;
+    width: 350px;
+    height: 35px;
+}
+
+.requirement_modal_comment_input button {
+    background-color: var(--blue);
+    color: var(--secondary-background);
+    font-family: "Roboto Condensed", sans-serif;
+    border: none;
+    border-radius: 5px;
+    padding: 9.5px;
+    margin-left: 10px;
+}
