@@ -296,7 +296,7 @@ const ModalRequirements = forwardRef((props, modalRef) => {
       </Box>
 
       <ul className="tags-view">
-        {typeof requirement.tags !== 'string' && requirement.tags.map((item, id) => (
+        {(requirement.tags && typeof requirement.tags !== 'string') && requirement.tags.map((item, id) => (
           <li key={id}>
             {item}
             {settings ? (
@@ -388,7 +388,7 @@ const ModalRequirements = forwardRef((props, modalRef) => {
             </Box>
             <Box id="carrossel">
               <Box className="carrossel">
-                {typeof requirement.legisladores !== 'string' && requirement.legisladores.map((item, id) => (
+                {(requirement.legisladores && typeof requirement.legisladores !== 'string') && requirement.legisladores.map((item, id) => (
                   <Box key={id} className="card-legislador">
                     <Box id="card">
                       <h4>{item.legislador}</h4>

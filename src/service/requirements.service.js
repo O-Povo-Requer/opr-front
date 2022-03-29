@@ -41,6 +41,35 @@ export async function getHypedRequirement() {
   });
 }
 
+export async function getRequerimentsStatus() {
+  let total = 0;
+  let analisys = 0;
+  let concluded = 0;
+  let notAccepted = 0;
+
+  return new Promise((resolve) => {
+    apiAuth.get("/requerimentos")
+      .then((response) => {
+        if (response.data) {
+          if (response.data.length > 0) {
+            response.data.map((requerimento) => {
+              total += 1;
+              if (requerimento.status === "concluded") {
+                concluded += 1;
+              } else if (requerimento.status === "not_accepted") {
+                notAccepted += 1;
+              } else {
+                analisys += 1;
+              }
+            })
+            
+            resolve({total, analisys, concluded, notAccepted});
+          }
+        }
+      })
+  })
+}
+
 export async function getRequirement(requirementId) {
   return new Promise((resolve, reject) => {
     apiAuth
