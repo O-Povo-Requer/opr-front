@@ -75,24 +75,41 @@
   font-size: 14px;
 }
 
-.requirement_show_modal .status {
+.requirement_show_modal .status_requirement {
   display: flex;
   align-items: center;
 }
 
-.requirement_show_modal .status h4 {
+.requirement_show_modal .status_requirement h4 {
   color: var(--blue);
   font-weight: 600;
   margin-bottom: 0px !important;
   width: auto !important
 }
 
-.requirement_show_modal .status span {
+.requirement_show_modal .status_requirement span {
   font-size: 12px;
   padding: 4px 18px;
+  margin-left: 10px;
   border-radius: 20px;
   background: var(--orange);
   color: var(--secondary-background);
+}
+
+.requirement_show_modal .status_requirement span.concluded {
+  background: var(--green);
+}
+
+.requirement_show_modal .status_requirement span.not_accepted {
+  background: var(--red);
+}
+
+.status_change {
+  margin-left: 15px !important;
+}
+
+.status_change span {
+  background: transparent !important;
 }
 
 .tags-view {

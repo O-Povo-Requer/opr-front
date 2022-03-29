@@ -16,8 +16,15 @@ import Modal from "../Modal";
 
 import "./styles.css";
 import "./response.css";
-import { modifyRequirement, getLikeAndComments } from "../../service/requirements.service";
+import { 
+  modifyRequirement, 
+  getLikeAndComments, 
+  supportRequirement, 
+  unsupportRequirement,
+  createComment
+} from "../../service/requirements.service";
 import { useRequirements } from "../../contexts/requirementsContext";
+import { useUser } from "../../contexts/userContext";
 
 const ModalRequirements = forwardRef((props, modalRef) => {
   const [open, setOpen] = useState(false);
@@ -28,6 +35,21 @@ const ModalRequirements = forwardRef((props, modalRef) => {
   const [viewImage, setViewImage] = useState("");
   const [requirementLikes, setRequirementLikes] = useState(0);
   const [requirementComments, setRequirementComments] = useState([]);
+  const [newStatus, setNewStatus] = useState(false);
+
+  const { updateRequirement } = useRequirements();
+  const { currentUser, logged } = useUser();
+
+  const modalRefTags = useRef();
+  const modalRefLegislator = useRef();
+  const modalViewMedia = useRef();
+  const inputCommentRef = useRef();
+
+  const statusOptions = [
+    { label: 'Em avaliação', value: 'analisys' },
+    { label: 'Não aceito', value: 'not_accepted' },
+    { label: 'Concluído', value: 'concluded' },
+  ];
 
   useEffect(() => {
     function fetchAndParseInfos() {
@@ -45,12 +67,6 @@ const ModalRequirements = forwardRef((props, modalRef) => {
     return fetchAndParseInfos();
   }, [])
 
-  const { updateRequirement } = useRequirements();
-
-  const modalRefTags = useRef();
-  const modalRefLegislator = useRef();
-  const modalViewMedia = useRef();
-
   const getRequirementStatus = () => {
     if (requirement.status === "concluded") {
       return "Concluído";
@@ -64,21 +80,47 @@ const ModalRequirements = forwardRef((props, modalRef) => {
   const makeUpdateRequirement = () => {
     const modifyData = {...requirement, 
       tags: requirement.tags ? JSON.stringify(requirement.tags) : "",
-      legisladores: requirement.legisladores ? JSON.stringify(requirement.legisladores) : ""
+      legisladores: requirement.legisladores ? JSON.stringify(requirement.legisladores) : "",
+      status: newStatus
     }
 
     modifyRequirement(modifyData, requirement.id).then((response) => {
       updateRequirement(response);
+      props.closingModal();
       modalRef.current.closeModal();
     });
   };
 
   const handleSupport = () => {
+    if (!logged) {
+      return;
+    }
+    
     setSupport(!support);
-    if (!support)
+
+    const supportData = {
+      "cpf": currentUser.cpf,
+      "idRequerimento": requirement.id
+    }
+
+    if (!support) {
       setRequirement({ ...requirement, likes: requirement.likes + 1 });
-    // POST -> /support
-    else setRequirement({ ...requirement, likes: requirement.likes - 1 }); // POST -> /unsupport
+      setRequirementLikes(requirementLikes + 1);
+      supportRequirement(supportData).catch(() => {
+        setSupport(!support);
+        alert.call("Erro ao curtir");
+        setRequirement({ ...requirement, likes: requirement.likes - 1 });
+      })
+    }
+    else {
+      setRequirement({ ...requirement, likes: requirement.likes - 1 });
+      setRequirementLikes(requirementLikes - 1);
+      unsupportRequirement(supportData).catch(() => {
+        setSupport(!support);
+        alert.call("Erro ao descurtir");
+        setRequirement({ ...requirement, likes: requirement.likes + 1 });
+      })
+    }
   };
 
   const handleSettings = (shouldSave = false) => {
@@ -137,17 +179,29 @@ const ModalRequirements = forwardRef((props, modalRef) => {
   };
 
   const handleComment = () => {
+    console.log(requirementComments)
     const data = {
-      name: requirement.name,
-      message: comment,
+      "cpf_usuario": currentUser.cpf,
+      "requerimento": requirement.id,
+      "comentario": comment,
+      "tipo_usuario": currentUser.partido ? "legislador" : "cidadao"
     };
+    
+    let newCommentsArray = requirementComments;
+    newCommentsArray.push(data);
 
     if (comment) {
-      setRequirement({
-        ...requirement,
-        comments: [...requirement.comments, data],
-      });
-      setComment("");
+      requirementComments(newCommentsArray);
+      createComment(data).then(() => {
+        setRequirement({
+          ...requirement,
+          comments: [...requirement.comments, data],
+        });
+        inputCommentRef.reset()
+        setComment("");
+      }).catch(() => {
+        alert.call("Erro ao criar comentário");
+      })
     }
   };
 
@@ -161,7 +215,7 @@ const ModalRequirements = forwardRef((props, modalRef) => {
   };
 
   return (
-    <Modal ref={modalRef} additionalClass="box-requirement requirement_show_modal">
+    <Modal ref={modalRef} closingModal={props.closingModal} additionalClass="box-requirement requirement_show_modal">
       {settings ? (
         <Box className="header-title">
           <h3>Visualização de Requerimento</h3>
@@ -212,9 +266,33 @@ const ModalRequirements = forwardRef((props, modalRef) => {
         </h5>
       </Box>
 
-      <Box className="status">
+      <Box className={`status_requirement ${!settings ? "changing" : ""}`}>
         <h4>{requirement.titulo}</h4>
-        {!settings || <span>{getRequirementStatus()}</span>}
+          {!settings ? 
+            <TextField
+            id="outlined-select-currency-native"
+            select
+            value={newStatus}
+            onChange={(e) => setNewStatus(e.target.value)}
+            SelectProps={{
+              native: true,
+            }}
+            helperText="Por favor selecione o status"
+            variant="outlined"
+            className="status_change"
+            required
+          >
+            <option value="" selected disabled hidden>
+              Escolha o status
+            </option>
+            {statusOptions && statusOptions.map((option, id) => (
+              <option key={id} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </TextField>
+          : 
+          <span className={requirement.status}>{getRequirementStatus()}</span>}
       </Box>
 
       <ul className="tags-view">
@@ -336,46 +414,53 @@ const ModalRequirements = forwardRef((props, modalRef) => {
             <h4>Comentários</h4>
             <Box className="boxComments">
               {requirementComments && requirementComments.map((item, id) => (
-                <Box key={id} className="comments">
-                  <Box className="profile">
-                    {item.user ? (
-                      <img
-                        src={item.user}
-                        width={20}
-                        height={20}
-                        alt="Profile"
-                      />
-                    ) : (
-                      <AccountCircleRoundedIcon color="action" />
-                    )}
-                    <small>{item.nome}</small>
-                  </Box>
-                  <p>{item.comentario}</p>
-                </Box>
+                item.comentario &&
+                  (
+                    <Box key={id} className="comments">
+                      <Box className="profile">
+                        {item.user ? (
+                          <img
+                            src={item.user}
+                            width={20}
+                            height={20}
+                            alt="Profile"
+                          />
+                        ) : (
+                          <AccountCircleRoundedIcon color="action" />
+                        )}
+                        <small>{item.nome || "Usuário"}</small>
+                      </Box>
+                      <p>{item.comentario}</p>
+                    </Box>
+                  )
               ))}
               <span id="downScroll" />
             </Box>
-            <Box className="box-write">
-              <input
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Digite sua mensagem..."
-                onKeyPress={(event) => {
-                  if (event.key === "Enter") {
-                    handleComment();
-                  }
-                }}
-                type="text"
-                required
-              />
-              <Button
-                href="#downScroll"
-                onClick={() => handleComment()}
-                className="comment-submit"
-              >
-                Comentar
-              </Button>
-            </Box>
+            
+            {logged &&
+              <Box className="box-write">
+                <input
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                  placeholder="Digite sua mensagem..."
+                  onKeyPress={(event) => {
+                    if (event.key === "Enter") {
+                      handleComment();
+                    }
+                  }}
+                  type="text"
+                  ref={inputCommentRef}
+                  required
+                />
+                <Button
+                  href="#downScroll"
+                  onClick={() => handleComment()}
+                  className="comment-submit"
+                >
+                  Comentar
+                </Button>
+              </Box>
+            }
           </Box>
         )}
       </Box>

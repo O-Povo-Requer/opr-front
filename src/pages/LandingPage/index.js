@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThumbUpOutlined, CommentOutlined } from "@material-ui/icons";
 import { useNavigate } from "react-router-dom";
 
 import ProjectLogo from "../../assets/ProjectLogo.png"
+import { getHypedRequirement } from '../../service/requirements.service';
 import './styles.css';
 
 export default function LandingPage() {
-    const requirements = [0, 1, 2, 3];
+    const [requirements, setRequirements] = useState([]);
 
     const navigate = useNavigate();
+
+    useEffect(() => {
+        getHypedRequirement().then((response) => {
+            console.log(response)
+            setRequirements(response)
+        })
+    }, [])
 
     function redirectToLogin() {
         navigate("/login");
@@ -35,32 +43,32 @@ export default function LandingPage() {
             </section>
 
             <section className="requirements_container">
-                {requirements.map((requirement) => (
-                    <div className="requirement" key={requirement}>
+                {requirements.map((requirement, index) => (
+                    <div className="requirement" key={index}>
                         <section className="user_section">
                             <div className="user_image">
                                 <img src="/profile.png" alt="user-image" />
                             </div>
                             <div className="user_infos">
-                                <span>Marcos Antônio</span>
-                                <span>Campina Grande - PB</span>
+                                <span>{requirement.nome}</span>
+                                <span>{requirement.cidade}</span>
                             </div>
                         </section>
 
                         <section className="requirement_infos">
-                            <span>Título descritivo do requerimento</span>
-                            <p>Descrição do Requerimento feito na busca de solucionar um problema existente dentro da comunidade!</p>
+                            <span>{requirement.titulo}</span>
+                            <p>{requirement.descricao}</p>
                         </section>
 
                         <section className="requirement_actions">
                             <div className="support_requirement">
-                                <ThumbUpOutlined />
-                                <span>235 Apoios</span>
+                                <ThumbUpOutlined style={{ color: "#666666" }}/>
+                                <span>{requirement.curtidas} Apoios</span>
                             </div>
 
                             <div className="support_requirement">
-                                <CommentOutlined />
-                                <span>100 Comentários</span>
+                                <CommentOutlined style={{ color: "#666666" }}/>
+                                <span>{requirement.comentarios} Comentários</span>
                             </div>
                         </section>
                     </div>

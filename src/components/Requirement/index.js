@@ -66,7 +66,7 @@ export default function Requirement({requirement}) {
             </div>
 
             {shouldOpenModal && 
-                <ModalRequirements ref={showReqModalRef} requirement={requirement}/>
+                <ModalRequirements closingModal={() => setShouldOpenModal(false)} ref={showReqModalRef} requirement={requirement}/>
             }
         </>
     )

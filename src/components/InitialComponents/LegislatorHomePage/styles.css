@@ -59,7 +59,7 @@
     color: var(--blue);
   }
   
-  .status span {
+  .requirement_legislator_container .status span {
     font-size: 12px;
     padding: 4px 18px;
     border-radius: 20px;

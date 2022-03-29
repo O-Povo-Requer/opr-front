@@ -1,4 +1,4 @@
-import { apiAuth } from "./api";
+import { api, apiAuth } from "./api";
 
 export async function createRequirement(requirementData) {
     return new Promise((resolve, reject) => {
@@ -29,10 +29,11 @@ export async function modifyRequirement(updateData, requirementId) {
 
 export async function getHypedRequirement() {
   return new Promise((resolve, reject) => {
-    apiAuth
-      .get("/emalta")
+    api.get("/emalta")
       .then((response) => {
-        resolve(response.data);
+        if (response.data.emalta) {
+          resolve(response.data.emalta);
+        }
       })
       .catch(() => {
         reject();
@@ -83,11 +84,11 @@ export async function getLikeAndComments(requirementId) {
       likes = 0
     })
 
-    await apiAuth.post("search/comentario", {
-        id: requirementId
+    await apiAuth.post("requerimento/comentarios", {
+        requerimento: requirementId
     }).then((response) => {
         if (!response.data.message) {
-          comments = response.data
+          comments = response.data.comentarios
         }
     }).catch(() => {
       comments = []
@@ -111,3 +112,45 @@ export async function changeRequirementStatus(updateData, requirementId) {
         })
     })
 } 
+
+export async function supportRequirement(supportData) {
+  return new Promise((resolve, reject) => {
+    apiAuth.post("/curtida", supportData).then((response) => {
+      if (response.data.message === "Curtida realizada com sucesso!") {
+        resolve();
+      } else {
+        reject();
+      }
+    }).catch(() => {
+      reject();
+    })
+  })
+}
+
+export async function unsupportRequirement(supportData) {
+  return new Promise((resolve, reject) => {
+    apiAuth.delete("/curtida", supportData).then((response) => {
+      if (response.data.message === "Requerimento descurtido com sucesso.") {
+        resolve();
+      } else {
+        reject();
+      }
+    }).catch(() => {
+      reject();
+    })
+  })
+}
+
+export async function createComment(commentData) {
+  return new Promise((resolve, reject) => {
+    apiAuth.post("comentario", commentData).then((response) => {
+      if (response.data.ComentarioCriado) {
+        resolve();
+      } else {
+        reject();
+      }
+    }).catch(() => {
+      reject();
+    })
+  })
+}
