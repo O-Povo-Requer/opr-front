@@ -1,6 +1,5 @@
-import React, { useState, useRef, forwardRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "./styles.css";
-import { Link } from 'react-router-dom';
 import { Button, Box } from "@material-ui/core/";
 
 import {
@@ -16,17 +15,38 @@ import HeaderBar from "../../HeaderBar/index";
 import LegislatorCard from "../../LegislatorCard/index";
 import Modal from "../../ModalRequirements";
 import { useRequirements } from "../../../contexts/requirementsContext";
+import { getHypedRequirement, getRequerimentsStatus } from "../../../service/requirements.service";
 
 export default function LegislatorHomePage() {
-
     const modalRef = useRef();
     
     const { requirements } = useRequirements();
-    const [requirement, setRequirement] = useState(requirements[0]);
+    const [requirement, setRequirement] = useState([]);
 
     const [support, setSupport] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [comment, setComment] = useState("");
+    const [total, setTotal] = useState(0);
+    const [analisys, setAnalisys] = useState(0);
+    const [concluded, setConcluded] = useState(0);
+    const [notAccepted, setNotAccepted] = useState(0);
+
+    useEffect(() => {
+        return getHypedRequirement().then((response) => {
+            if (response) {
+                setRequirement(response[0]);
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        return getRequerimentsStatus().then((response) => {
+            setTotal(response.total);
+            setAnalisys(response.analisys);
+            setConcluded(response.concluded);
+            setNotAccepted(response.notAccepted);
+        })
+    }, [])
 
     const handleSupport = () => {
         setSupport(!support);
@@ -77,11 +97,11 @@ export default function LegislatorHomePage() {
 
             <HeaderBar />
                       
-            <LegislatorCard requeriments={299} analysis={274} denied={10}
-            done = {15} />
+            <LegislatorCard requeriments={total} analysis={analisys} denied={notAccepted}
+            done = {concluded} />
 
             <section className="requirement_legislator_container"> 
-                <section  className="requirement_legislator_content"  onClick={() => modalRef.current.openModal()}>
+                <section  className="requirement_legislator_content"  onClick={() => {}}>
                     
                     <div className="header_title">
                         <strong>Reivindicação em destaque</strong>
@@ -94,31 +114,24 @@ export default function LegislatorHomePage() {
                                                              
                             <Box className="profile">
 
-                                { requirement.user.photo ? (
-                                <img
-                                    src={requirement.user.photo}
-                                    width={30}
-                                    height={30}
-                                    alt="Image"
-                                />
-                                    ) : (
-                                    <AccountCircleRoundedIcon color="action" />
-                                )}
+                                
+                                <AccountCircleRoundedIcon color="action" />
 
                                 <Box className="info">
-                                    <p>{requirement.user.name}</p>
-                                    <p>{requirement.user.location}</p> 
+                                    <p>{requirement.nome}</p>
+                                    <p>{requirement.cidade}</p> 
                                 </Box>
 
                             </Box>
 
                             <h5 className="date">
                                     <strong> Data de publicação:  </strong>
-                                    <p>{requirement.user.dateOccurrence}</p>
+                                    <p>28/03/2022</p>
                             </h5>                      
                     </div>
 
-                    <p className="description"> {requirement.message}</p>
+                    <p className="spotlight_requirement_title">{requirement.titulo}</p>
+                    <p className="description">{requirement.descricao}</p>
 
         
                 </section>
@@ -126,14 +139,30 @@ export default function LegislatorHomePage() {
                 <Box className="box_support">
                         <Button onClick={() => handleSupport()}>
                             {support ? (
-                            <ThumbUpAltRoundedIcon />
+                                <div>
+                                    <ThumbUpAltRoundedIcon />
+                                    <span>{`${requirement.curtidas} Apoios`}</span>
+                                </div>
                             ) : (
-                            <ThumbUpAltOutlinedIcon color="action" />
+                                <div>
+                                    <ThumbUpAltOutlinedIcon color="action" />
+                                    <span>{`${requirement.curtidas} Apoios`}</span>
+                                </div>
                             )}
                         </Button>
                        
-                        <Button onClick = {() => handleShowComments()}>
-                            {showComments ? <CommentIcon /> : <CommentOutlinedIcon />}                            
+                        <Button onClick = {() => {}}>
+                            {showComments ? 
+                                <div>
+                                    <CommentIcon />
+                                    <span>{`${requirement.comentarios} Comentários`}</span>
+                                </div>
+                                : 
+                                <div>
+                                    <CommentOutlinedIcon />
+                                    <span>{`${requirement.comentarios} Comentários`}</span>
+                                </div>
+                            }                            
                              </Button>                  
                     </Box>
 

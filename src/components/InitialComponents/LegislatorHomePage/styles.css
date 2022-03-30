@@ -5,14 +5,17 @@
     margin-left: 80px;
     width: calc(100vw - 100px);
     display: flex;
-    height: 52vh;
     flex-direction: column;    
     align-items: flex-start;
     background-color: var(--secondary-background);
     justify-content: space-around;
     font-family: "Roboto-condensed", sans-serif;
     gap: 20px;
-    padding-top: 9px;
+    padding: 20px 15px;
+}
+
+.requirement_legislator_content {
+  width: 100%;
 }
 
 .box {
@@ -134,13 +137,22 @@
     color: var(--descriptions);
     text-align: center;
   }
+
+  .spotlight_requirement_title {
+    font-size: 18px;
+    color: var(--infos);
+    margin: 0 8px 8px 0;
+    padding: 12px 12px 0 12px;
+    font-family: "Roboto Condensed", sans-serif;
+  }
   
   .description {
-    font-size: 16px;
-    color: var(--infos);
+    font-size: 16px !important;
+    color: var(--descriptions);
     margin: 0 8px 8px 0;
     text-align: justify;
     padding: 12px 12px 0 12px;
+    font-family: "Roboto Condensed", sans-serif;
   }
   
   .inputText {
@@ -154,9 +166,7 @@
     align-items: center;
     flex-direction: row;
     justify-content: space-around;
-    margin-bottom: 18px;
-    height: 2vh;
-    width: 10vw;
+    margin-left: 10px;
   }
   
   .box_support button {
@@ -168,11 +178,23 @@
   
   .box_support button svg {
     color: var(--descriptions);
+    margin-right: 5px;
   }
   
   .box_support span {
-    font-size: 16px;
+    font-size: 12px;
     color: var(--descriptions);
+    display: flex;
+    flex-direction: row;
+  }
+
+  .box_support button span div {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .box_support button span div span {
+    width: 120px;
   }
 
   .comments_container{
